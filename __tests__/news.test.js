@@ -5,7 +5,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 
-const endpoints = require('../endpoints.json')
+const endpoints = require("../endpoints.json")
 
 
 beforeEach(() => seed(data));
@@ -52,5 +52,61 @@ describe('GET /api', () => {
         })
     });
 });
+
+describe('GET /api/articles/:article_id', () => {
+    test('should return correct status code', () => {
+        return request(app)
+        .get('/api/articles/3')
+        .expect(200)
+    });
+     test('should return the requested article', () => {
+        return request(app)
+        .get(`/api/articles/1`)
+        .expect(200)
+        .then((response) => {
+            const responseArray = response.body.article
+            responseArray.forEach((article) => {
+                expect(Object.keys(article)).toHaveLength(8)
+                expect(article).toHaveProperty('author');
+                expect(article).toHaveProperty('title');
+                expect(article).toHaveProperty('article_id');
+                expect(article).toHaveProperty('body');
+                expect(article).toHaveProperty('topic');
+                expect(article).toHaveProperty('created_at');
+                expect(article).toHaveProperty('votes');
+                expect(article).toHaveProperty('article_img_url')
+            })
+        }) 
+    })
+        test('should return a different requested article', () => {
+            return request(app)
+            .get(`/api/articles/5`)
+            .expect(200)
+            .then((response) => {
+                const responseArray = response.body.article
+                responseArray.forEach((article) => {
+                    expect(Object.keys(article)).toHaveLength(8)
+                    expect(article).toHaveProperty('title');
+                    expect(article).toHaveProperty('topic');
+                    expect(article).toHaveProperty('author');
+                    expect(article).toHaveProperty('body');
+                    expect(article).toHaveProperty('created_at');
+                    expect(article).toHaveProperty('votes');
+                    expect(article).toHaveProperty('article_img_url')
+                })
+            }) 
+        
+    })
+    test('should return appropriate error if id does not exist', () => {
+        return request(app)
+        .get(`/api/articles/200000`)
+        .expect(404)
+        .then((response) => {
+            const responseArray = response.res.statusMessage
+            expect(responseArray).toEqual("Not Found");
+          })
+    });
+});
+
 
 
