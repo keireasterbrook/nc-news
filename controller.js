@@ -1,4 +1,4 @@
-const { selectTopics } = require('./model')
+const { selectTopics, selectApi } = require('./model')
 
 const getTopics = (request, response, next) => {
     return selectTopics()
@@ -9,6 +9,14 @@ const getTopics = (request, response, next) => {
             next(err)})
 }
 
+const getApi = (request, response, next) => {
+    return selectApi()
+    .then((api) => {
+        return response.status(200).send(api)
+    })
+        .catch((err)=>{
+            next(err)})
+}
 
 
-module.exports = { getTopics }
+module.exports = { getTopics, getApi }

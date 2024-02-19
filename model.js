@@ -1,4 +1,6 @@
 const db = require('./db/connection')
+const fs = require('fs').promises
+
 
 function selectTopics(){
     return db.query('SELECT * FROM topics;')
@@ -7,4 +9,12 @@ function selectTopics(){
     })
 }
 
-module.exports = { selectTopics }
+function selectApi(){
+    return fs.readFile(`${__dirname}/endpoints.json`, 'utf-8', (apiName) =>{ 
+        JSON.parse(apiName);
+        
+        
+    })
+}
+
+module.exports = { selectTopics, selectApi }
