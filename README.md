@@ -1,3 +1,9 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+
+git.ignored files to be recreated - 
+
+.env.development - stores information about the database 'nc_news';
+
+.env.test - stores information about the database 'nc_news_test';
+
