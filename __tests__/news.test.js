@@ -5,6 +5,9 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 
+const endpoints = require('../endpoints.json')
+
+
 beforeEach(() => seed(data));
 afterAll(() => db.end());
 
@@ -21,6 +24,7 @@ describe('GET /api/topics', () => {
         .then((response) => {
             const topicsArray = response.body.topic
             topicsArray.forEach((topic) => {
+                expect(Object.keys(topic)).toHaveLength(2)
                 expect(topic).toHaveProperty('slug');
                 expect(topic).toHaveProperty('description');
             })
@@ -35,6 +39,18 @@ describe('GET /api/topics', () => {
             expect(responseArray).toEqual("Not Found");
           });
     })
+});
+
+describe('GET /api', () => {
+    test('should return information about available endpoints ', () => {
+        return request(app)
+        .get(`/api`)
+        .expect(200)
+        .then((response) => {
+            const responseJSON = JSON.parse(response.text)
+            expect(responseJSON).toEqual(endpoints)
+        })
+    });
 });
 
 
