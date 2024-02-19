@@ -1,13 +1,13 @@
 const express = require('express');
 const app = express();
-const { getTopics, getApi } = require('./controller')
-
-app.use(express.json())
+const { getTopics, getApi, getArticleById } = require('./controller')
 
 
 app.get('/api/topics', getTopics)
 
 app.get('/api', getApi)
+
+app.get('/api/articles/:article_id', getArticleById)
 
 app.use((err, req, res, next) => {
     if (err.status && err.msg) {
