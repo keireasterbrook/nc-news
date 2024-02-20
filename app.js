@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { getTopics, getApi, getArticleById } = require('./controller')
+const { getTopics, getApi, getArticleById, getArticles } = require('./controller')
 
 
 app.get('/api/topics', getTopics)
@@ -8,6 +8,8 @@ app.get('/api/topics', getTopics)
 app.get('/api', getApi)
 
 app.get('/api/articles/:article_id', getArticleById)
+
+app.get('/api/articles', getArticles)
 
 app.use((err, req, res, next) => {
     if (err.status && err.msg) {
@@ -21,7 +23,7 @@ app.use((err, req, res, next) => {
   })
   app.use((err, req, res, next) => {
     if (err.code === '22P02') {
-      res.status(400).send({ msg: 'Bad request' });
+      res.status(400).send({ msg: 'Bad Request' });
     } else next(err);
   })
   app.use((err, req, res, next) => {
