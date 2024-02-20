@@ -1,4 +1,4 @@
-const { selectTopics, selectApi, selectArticleById } = require('./model')
+const { selectTopics, selectApi, selectArticleById, selectArticles } = require('./model')
 
 const getTopics = (request, response, next) => {
     return selectTopics()
@@ -22,7 +22,7 @@ const getArticleById = (request, response, next) => {
     const { article_id } = request.params
     return selectArticleById(article_id)
     .then((article) => {
-        if(article.length === 0){
+        if(!article){
             response.status(404).send("Not Found")
         } else {
             response.status(200).send({article})
@@ -32,4 +32,13 @@ const getArticleById = (request, response, next) => {
 
 }
 
-module.exports = { getTopics, getApi, getArticleById }
+const getArticles = (request, response, next) => {
+    return selectArticles()
+    .then((article) => {
+        return response.status(200).send({article})
+    })
+        .catch((err)=>{
+            next(err)})
+}
+
+module.exports = { getTopics, getApi, getArticleById, getArticles }
