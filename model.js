@@ -1,5 +1,4 @@
 const db = require('./db/connection')
-const { sort } = require('./db/data/test-data/articles')
 const fs = require('fs').promises
 
 
@@ -11,8 +10,8 @@ function selectTopics(){
 }
 
 function selectApi(){
-    return fs.readFile(`${__dirname}/endpoints.json`, 'utf-8', (apiName) =>{ 
-        JSON.parse(apiName); 
+    return fs.readFile(`${__dirname}/endpoints.json`, 'utf-8').then((apiName) =>{ 
+        return JSON.parse(apiName); 
     })
 }
 
@@ -33,7 +32,7 @@ function selectArticles(sort_by = 'created_at', order = 'DESC'){
     articles.created_at, 
     articles.votes, 
     articles.article_img_url, 
-    COUNT(comments.article_id) AS comment_count 
+    CAST(COUNT(comments.article_id) AS INT) AS comment_count 
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
     GROUP BY articles.article_id
@@ -43,5 +42,23 @@ function selectArticles(sort_by = 'created_at', order = 'DESC'){
     })
 }
 
-module.exports = { selectTopics, selectApi, selectArticleById, selectArticles }
+function selectCommentsFromArticle(article_id){
+ return db.query(`
+ SELECT 
+ comment_id,
+ votes,
+ created_at,
+ author,
+ body,
+ article_id
+ FROM comments
+ WHERE article_id = $1
+ ORDER BY created_at DESC`, [article_id])
+ .then((comments)=>{
+    return comments.rows;
+})
+
+}
+
+module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle }
 
