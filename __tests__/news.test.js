@@ -68,6 +68,7 @@ describe('GET /api/articles/:article_id', () => {
         .expect(200)
         .then((response) => {
             const responseArray = response.body.article
+                expect(responseArray.article_id).toBe(1)
                 expect(responseArray).toHaveProperty('title');
                 expect(responseArray).toHaveProperty('topic');
                 expect(responseArray).toHaveProperty('author');
@@ -83,6 +84,7 @@ describe('GET /api/articles/:article_id', () => {
             .expect(200)
             .then((response) => {
                 const responseArray = response.body.article
+                    expect(responseArray.article_id).toBe(5)
                     expect(responseArray).toHaveProperty('title');
                     expect(responseArray).toHaveProperty('topic');
                     expect(responseArray).toHaveProperty('author');
@@ -120,6 +122,8 @@ describe('GET /api/articles', () => {
         .expect(200)
         .then((response) => {
             const responseArray = response.body.article
+            const currentArticleLength = data.articleData.length
+            expect(responseArray).toHaveLength(currentArticleLength)
             responseArray.forEach((article) => {
                 expect(Object.keys(article)).toHaveLength(8)
                 expect(article).toHaveProperty('author')
@@ -132,6 +136,27 @@ describe('GET /api/articles', () => {
                 expect(article).toHaveProperty('comment_count')
         })
     });
+})  
+    test('should return correct data types', () => {
+    return request(app)
+    .get(`/api/articles`)
+    .expect(200)
+    .then((response) => {
+        const responseArray = response.body.article
+        const currentArticleLength = data.articleData.length
+        expect(responseArray).toHaveLength(currentArticleLength)
+        responseArray.forEach((article) => {
+            expect(Object.keys(article)).toHaveLength(8)
+            expect(typeof article.author).toEqual('string')
+            expect(typeof article.title).toEqual('string')
+            expect(typeof article.article_id).toEqual('number')
+            expect(typeof article.topic).toEqual('string')
+            expect(typeof article.created_at).toEqual('string')
+            expect(typeof article.votes).toEqual('number')
+            expect(typeof article.article_img_url).toEqual('string')
+            expect(typeof article.comment_count).toEqual('number')
+    })
+});
 })
     test('should not return the body property', () => {
         return request(app)
@@ -175,4 +200,56 @@ test('should return in date descending order',() => {
 
 })
 
+describe('GET /api/articles/:article_id/comments', () => {
+    test('should return with all comments for an article', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then((response) => {
+            const responseArray = response.body.comments
+            expect(responseArray.length).toBeGreaterThan(0)
+            responseArray.forEach((comment) => {
+                expect(comment.article_id).toBe(1)
+            })
+        })
+    });
+    test('should return an array of comments with the correct properties', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then((response) => {
+            const responseArray = response.body.comments
+            expect(responseArray.length).toBeGreaterThan(0)
+            responseArray.forEach((comment) => {
+                expect(comment).toHaveProperty('comment_id')
+                expect(comment).toHaveProperty('votes')
+                expect(comment).toHaveProperty('created_at')
+                expect(comment).toHaveProperty('author')
+                expect(comment).toHaveProperty('body')
+                expect(comment).toHaveProperty('article_id')
+            })
+        })
+        
+    });
+    test('returned array should be in most recent comments first order', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then((response) => {
+        const responseArray = response.body.comments
+        expect(responseArray).toBeSortedBy('created_at', {descending: true})
+      });
+        
+    });
+    test('should return 404 not found error for non-existent id request ', () => {
+        return request(app)
+        .get('/api/articles/999999/comments')
+        .expect(404)
+        .then((response) => {
+        const responseArray = response.res.statusMessage
+        expect(responseArray).toEqual("Not Found");
+        });
+    });
+
+});
 

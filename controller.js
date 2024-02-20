@@ -1,4 +1,4 @@
-const { selectTopics, selectApi, selectArticleById, selectArticles } = require('./model')
+const { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle } = require('./model')
 
 const getTopics = (request, response, next) => {
     return selectTopics()
@@ -41,4 +41,19 @@ const getArticles = (request, response, next) => {
             next(err)})
 }
 
-module.exports = { getTopics, getApi, getArticleById, getArticles }
+const getCommentsFromArticle = (request, response, next) => {
+    const { article_id } = request.params
+
+    
+    selectCommentsFromArticle(article_id)
+    .then((comments) => {
+        if (comments.length === 0) {
+            return response.status(404).send({ message: 'Not Found' });
+        }
+        response.status(200).send({comments})
+    }).catch((error) => {
+        next(error)
+    })
+}
+
+module.exports = { getTopics, getApi, getArticleById, getArticles, getCommentsFromArticle }
