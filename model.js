@@ -61,15 +61,30 @@ function selectCommentsFromArticle(article_id){
 }
 
 function insertComments(article_id, username, body){
+
     return db.query(`
         INSERT INTO comments (article_id, author, body)
-        VALUES ($1, $2, $3)
+        VALUES ($1, $2, $3) 
         RETURNING *
     `, [article_id, username, body])
     .then((comment) => {
+
         return comment.rows[0];
     });
 }
 
-module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments }
+function updateArticle(article_id, updatedVotes){
+    
+    return db.query(
+        `UPDATE articles
+        SET votes = votes + $2
+        WHERE article_id = $1
+        RETURNING *;
+        `, [article_id, updatedVotes]
+    ).then((result) => {
+        return result.rows[0];
+    })
+}
+
+module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle }
 

@@ -1,4 +1,4 @@
-const { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments } = require('./model')
+const { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle } = require('./model')
 
 const getTopics = (request, response, next) => {
     return selectTopics()
@@ -61,20 +61,41 @@ const postComments = (request, response, next) => {
     if (!username || !body) {
         return response.status(400).send({ message: 'Bad Request: Username and Body required' });
     }
-    return selectArticleById(article_id)
+  
+    selectArticleById(article_id)
     .then((article) => {
         if(!article){
             response.status(404).send("Not Found")
         } else {
-    insertComments(article_id, username, body)
+    return insertComments(article_id, username, body)
     .then((comment) => {
         response.status(201).send({ comment });
     })
-    .catch((error) => {
-        next(error);
-    });
 }
+}).catch((error) => { 
+    next(error);
+});
+}
+
+const patchArticle = (request, response, next) => {
+ const  updatedVotes = request.body.inc_votes
+ const { article_id } = request.params
+ 
+selectArticleById(article_id)
+ .then((article) => {
+     if(!article){
+         response.status(404).send("Not Found")
+ } else {
+ updateArticle(article_id, updatedVotes)
+ .then((article) => {
+   response.status(200).send({article})
+ }).catch((error) => {
+    next(error);
+})
+}
+}).catch((error) => {
+    next(error);
 })
 }
 
-module.exports = { getTopics, getApi, getArticleById, getArticles, getCommentsFromArticle, postComments }
+module.exports = { getTopics, getApi, getArticleById, getArticles, getCommentsFromArticle, postComments, patchArticle }

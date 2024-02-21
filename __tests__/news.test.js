@@ -280,22 +280,128 @@ describe('POST /api/articles/:article_id/comments', () => {
         })
         
     });
-    test('should return appropriate error if unacceptable request body', () => {
+    test('should return posted comment and ignore extra key', () => {
         return request(app)
-        .post('/api/articles/3/comments').send({body: 'I am an acceptable body of text shame about the other guy', unacceptableKey: 'I am so unacceptable'})
+        .post('/api/articles/3/comments').send({username: 'butter_bridge', body: "a good old body of text", unnecessaryKey: "anything"})
+        .expect(201)
+        .then((response) => {
+            const responseComment = response.body.comment
+            expect(responseComment).toMatchObject({
+                comment_id: expect.any(Number),
+                body: "a good old body of text",
+                article_id: 3,
+                author: "butter_bridge",
+                votes: 0,
+                created_at: expect.any(String)
+            })
+        })
+        
+    })
+    test('should return 400 error if no username or body key', () => {
+        return request(app)
+        .post('/api/articles/3/comments').send({body: 'I have no author'})
         .expect(400)
         .then((response) => {
             expect(response.body).toEqual({ message: 'Bad Request: Username and Body required' })})
         
         
     });
-    test('should return 404 if article attempting to post to does not exist', () => {
+    test('should return 400 error if invalid input data type', () => {
+        return request(app)
+        .post(`/api/articles/TEXT/comments`).send({username: 'butter_bridge', body: "a good old body of text"})
+        .expect(400)
+        .then((response) => {
+            const responseArray = response.res.statusMessage
+            expect(responseArray).toEqual("Bad Request");
+        })
+    });
+    test('should return 404 error if article attempting to post to does not exist', () => {
         return request(app)
         .post('/api/articles/999999/comments').send({username: 'butter_bridge', body: 'here is a body of text how about that'})
         .expect(404)
         .then((response) => {
         const responseArray = response.res.statusMessage
-        expect(responseArray).toEqual("Not Found");
-    });
-});
+        expect(responseArray).toEqual("Not Found")
+    })
+    }); 
+    test('should return 404 error if username does not exist', () => {
+        return request(app)
+        .post('/api/articles/3/comments').send({username: 'not_a_real_user', body: 'here is a body of text how about that'})
+        .expect(404)
+        .then((response) => {
+        const responseArray = response.res.statusMessage
+        expect(responseArray).toEqual("Not Found")
+    })
+    }); 
+    
 })
+
+describe('PATCH /api/articles/:article_id', () => {
+    test('should return article with updated votes added', () => {
+        return request(app)
+        .patch('/api/articles/1').send({ inc_votes: 30 })
+        .expect(200)
+        .then((response) => {
+            const updatedArticle = response.body.article
+           expect(updatedArticle).toMatchObject({
+            article_id: 1,
+            title: 'Living in the shadow of a great man',
+            topic: 'mitch',
+            author: 'butter_bridge',
+            body: 'I find this existence challenging',
+            created_at: expect.any(String),
+            votes: 130,
+            article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+          })
+        })
+    });
+    test('should return article with updated votes subtracted', () => {
+        return request(app)
+        .patch('/api/articles/1').send({ inc_votes: -30 })
+        .expect(200)
+        .then((response) => {
+            const updatedArticle = response.body.article
+            expect(updatedArticle).toMatchObject({
+                article_id: 1,
+                title: 'Living in the shadow of a great man',
+                topic: 'mitch',
+                author: 'butter_bridge',
+                body: 'I find this existence challenging',
+                created_at: expect.any(String),
+                votes: 70,
+                article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+              })
+            
+        })
+    })
+    test('should return 404 if article attempting to post to does not exist', () => {
+        return request(app)
+        .patch('/api/articles/999999').send({ inc_votes: 30 })
+        .expect(404)
+        .then((response) => {
+        const responseArray = response.res.statusMessage
+        expect(responseArray).toEqual("Not Found");
+        });
+    });
+    test('should return 400 if votes is an unacceptable data type', () => {
+        return request(app)
+        .patch('/api/articles/1').send({ inc_votes: 'TEXT' })
+        .expect(400)
+        .then((response) => {
+        const responseArray = response.res.statusMessage
+        expect(responseArray).toEqual("Bad Request");
+        });
+    });
+    test('should return 400 error if invalid input data type for the article', () => {
+        return request(app)
+        .patch('/api/articles/TEXT').send({ inc_votes: 30 })
+        .expect(400)
+        .then((response) => {
+            const responseArray = response.res.statusMessage
+            expect(responseArray).toEqual("Bad Request");
+        })
+    });
+
+
+})
+
