@@ -28,7 +28,7 @@
   },
   "GET /api/articles/:article_id": {
     "description": "serves an article by requested id",
-    "queries": [],
+    "queries": ["author", "topic"],
     "exampleResponse":  {
       "title": "Living in the shadow of a great man",
       "topic": "mitch",
@@ -39,6 +39,38 @@
       "article_img_url":
         "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
     }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves the comments from requested article",
+    "queries": ["1", "3"],
+    "exampleResponse": {
+      "comments": [
+        {
+        "comment_id": 5,
+        "votes": 0,
+        "created_at": "'2020-11-03T21:00:00.000Z'",
+        "author": "'icellusedkars'",
+        "body": "'I hate streaming noses'",
+        "article_id": 1
+      }]
+    }
+
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "serves the comment posted from requested author with new body of text",
+    "queries": ["1", "3"],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 19,
+          "body": "'a good old body of text'",
+          "article_id": 3,
+          "author": "'butter_bridge'",
+          "votes": 0,
+          "created_at": "'2024-02-21T08:46:15.243Z'"
+        }]
+    }
+
   }
 
 }
