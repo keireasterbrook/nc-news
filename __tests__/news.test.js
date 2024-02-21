@@ -405,3 +405,33 @@ describe('PATCH /api/articles/:article_id', () => {
 
 })
 
+describe('DELETE /api/comments/:comment_id', () => {
+    test('should return status 204 with no content', () => {
+        return request(app)
+        .delete('/api/comments/1')
+        .expect(204)
+        .then((response) => {
+            const responseArray = response.res.statusMessage
+            expect(responseArray).toEqual('No Content')
+        })
+    });
+    test('should return 400 error if invalid input data type for the comment id', () => {
+        return request(app)
+        .delete('/api/comments/TEXT')
+        .expect(400)
+        .then((response) => {
+            const responseArray = response.res.statusMessage
+            expect(responseArray).toEqual("Bad Request");
+        })
+    });
+    test('should return 404 error if comment id does not exist', () => {
+        return request(app)
+        .delete('/api/comments/999999')
+        .expect(404)
+        .then((response) => {
+            const responseArray = response.res.statusMessage
+            expect(responseArray).toEqual("Not Found");
+        })
+    });
+    
+});

@@ -1,3 +1,4 @@
+const { log } = require('console')
 const db = require('./db/connection')
 const fs = require('fs').promises
 
@@ -86,5 +87,16 @@ function updateArticle(article_id, updatedVotes){
     })
 }
 
-module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle }
+function removeComment(comment_id){
+    return db.query(`
+    DELETE FROM comments
+    WHERE comment_id = $1
+    RETURNING *;
+    `, [comment_id])
+    .then((comment) => {
+        console.log(comment.rows[0]);
+        return comment.rows[0]
+    })
+}
+module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle, removeComment }
 
