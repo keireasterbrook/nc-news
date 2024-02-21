@@ -60,5 +60,16 @@ function selectCommentsFromArticle(article_id){
 
 }
 
-module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle }
+function insertComments(article_id, username, body){
+    return db.query(`
+        INSERT INTO comments (article_id, author, body)
+        VALUES ($1, $2, $3)
+        RETURNING *
+    `, [article_id, username, body])
+    .then((comment) => {
+        return comment.rows[0];
+    });
+}
+
+module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments }
 

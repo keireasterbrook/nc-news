@@ -250,6 +250,52 @@ describe('GET /api/articles/:article_id/comments', () => {
         expect(responseArray).toEqual("Not Found");
         });
     });
+    test('should return appropriate error if invalid input data type', () => {
+        return request(app)
+        .get(`/api/articles/TEXT/comments`)
+        .expect(400)
+        .then((response) => {
+            const responseArray = response.res.statusMessage
+            expect(responseArray).toEqual("Bad Request");
+          })
+    });
 
 });
 
+describe('POST /api/articles/:article_id/comments', () => {
+    test('should return posted comment', () => {
+        return request(app)
+        .post('/api/articles/3/comments').send({username: 'butter_bridge', body: "a good old body of text"})
+        .expect(201)
+        .then((response) => {
+            const responseComment = response.body.comment
+            expect(responseComment).toMatchObject({
+                comment_id: expect.any(Number),
+                body: "a good old body of text",
+                article_id: 3,
+                author: "butter_bridge",
+                votes: 0,
+                created_at: expect.any(String)
+            })
+        })
+        
+    });
+    test('should return appropriate error if unacceptable request body', () => {
+        return request(app)
+        .post('/api/articles/3/comments').send({body: 'I am an acceptable body of text shame about the other guy', unacceptableKey: 'I am so unacceptable'})
+        .expect(400)
+        .then((response) => {
+            expect(response.body).toEqual({ message: 'Bad Request: Username and Body required' })})
+        
+        
+    });
+    test('should return 404 if article attempting to post to does not exist', () => {
+        return request(app)
+        .post('/api/articles/999999/comments').send({username: 'butter_bridge', body: 'here is a body of text how about that'})
+        .expect(404)
+        .then((response) => {
+        const responseArray = response.res.statusMessage
+        expect(responseArray).toEqual("Not Found");
+    });
+});
+})
