@@ -22,8 +22,8 @@ function selectArticleById(article_id){
     })
 }
 
-function selectArticles(sort_by = 'created_at', order = 'DESC'){
-    return db.query(`
+function selectArticles(topic, sort_by = 'created_at', order = 'DESC'){
+    let sqlString = `
     SELECT 
     articles.author, 
     articles.title, 
@@ -35,8 +35,21 @@ function selectArticles(sort_by = 'created_at', order = 'DESC'){
     CAST(COUNT(comments.article_id) AS INT) AS comment_count 
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id
+    `
+    const queryVals = []
+
+    if(topic){
+        sqlString += `WHERE articles.topic = $1`
+        queryVals.push(topic)
+    }
+    
+    sqlString += `
     GROUP BY articles.article_id
-    ORDER BY ${sort_by} ${order}`)
+    ORDER BY ${sort_by} ${order}
+    `
+
+
+    return db.query(sqlString, queryVals)
     .then((articles) => {
         return articles.rows
     })
