@@ -6,7 +6,7 @@ const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data/index");
 const { toBeSortedBy } = require('jest-sorted');
 
-const endpoints = require("../endpoints.json")
+const endpoints = require('../endpoints.json')
 
 
 
@@ -100,8 +100,8 @@ describe('GET /api/articles/:article_id', () => {
         .get(`/api/articles/200000`)
         .expect(404)
         .then((response) => {
-            const responseArray = response.res.statusMessage
-            expect(responseArray).toEqual("Not Found");
+            const responseMsg = response.res.statusMessage
+            expect(responseMsg).toEqual("Not Found");
           })
     });
     test('should return appropriate error if invalid input data type', () => {
@@ -109,8 +109,8 @@ describe('GET /api/articles/:article_id', () => {
         .get(`/api/articles/TEXT`)
         .expect(400)
         .then((response) => {
-            const responseArray = response.res.statusMessage
-            expect(responseArray).toEqual("Bad Request");
+            const responseMsg = response.res.statusMessage
+            expect(responseMsg).toEqual("Bad Request");
           })
     });
 });
@@ -184,8 +184,8 @@ test('should return 404 not found error for non-existent input request',() => {
     .get('/api/artiiicles')
     .expect(404)
     .then((response) => {
-        const responseArray = response.res.statusMessage
-        expect(responseArray).toEqual("Not Found");
+        const responseMsg = response.res.statusMessage
+        expect(responseMsg).toEqual("Not Found");
       });
 })
 test('should return in date descending order',() => {
@@ -193,8 +193,8 @@ test('should return in date descending order',() => {
     .get('/api/articles?sort_by=created_at')
     .expect(200)
     .then((response) => {
-        const responseArray = response.body.article
-        expect(responseArray).toBeSortedBy('created_at', {descending: true})
+        const responseMsg = response.body.article
+        expect(responseMsg).toBeSortedBy('created_at', {descending: true})
       });
 })
 
@@ -206,9 +206,9 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/1/comments')
         .expect(200)
         .then((response) => {
-            const responseArray = response.body.comments
-            expect(responseArray.length).toBeGreaterThan(0)
-            responseArray.forEach((comment) => {
+            const responseMsg = response.body.comments
+            expect(responseMsg.length).toBeGreaterThan(0)
+            responseMsg.forEach((comment) => {
                 expect(comment.article_id).toBe(1)
             })
         })
@@ -236,8 +236,8 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/1/comments')
         .expect(200)
         .then((response) => {
-        const responseArray = response.body.comments
-        expect(responseArray).toBeSortedBy('created_at', {descending: true})
+        const responseMsg = response.body.comments
+        expect(responseMsg).toBeSortedBy('created_at', {descending: true})
       });
         
     });
@@ -246,8 +246,8 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get('/api/articles/999999/comments')
         .expect(404)
         .then((response) => {
-        const responseArray = response.res.statusMessage
-        expect(responseArray).toEqual("Not Found");
+        const responseMsg = response.res.statusMessage
+        expect(responseMsg).toEqual("Not Found");
         });
     });
     test('should return appropriate error if invalid input data type', () => {
@@ -255,8 +255,8 @@ describe('GET /api/articles/:article_id/comments', () => {
         .get(`/api/articles/TEXT/comments`)
         .expect(400)
         .then((response) => {
-            const responseArray = response.res.statusMessage
-            expect(responseArray).toEqual("Bad Request");
+            const responseMsg = response.res.statusMessage
+            expect(responseMsg).toEqual("Bad Request");
           })
     });
 
@@ -311,8 +311,8 @@ describe('POST /api/articles/:article_id/comments', () => {
         .post(`/api/articles/TEXT/comments`).send({username: 'butter_bridge', body: "a good old body of text"})
         .expect(400)
         .then((response) => {
-            const responseArray = response.res.statusMessage
-            expect(responseArray).toEqual("Bad Request");
+            const responseMsg = response.res.statusMessage
+            expect(responseMsg).toEqual("Bad Request");
         })
     });
     test('should return 404 error if article attempting to post to does not exist', () => {
@@ -320,8 +320,8 @@ describe('POST /api/articles/:article_id/comments', () => {
         .post('/api/articles/999999/comments').send({username: 'butter_bridge', body: 'here is a body of text how about that'})
         .expect(404)
         .then((response) => {
-        const responseArray = response.res.statusMessage
-        expect(responseArray).toEqual("Not Found")
+        const responseMsg = response.res.statusMessage
+        expect(responseMsg).toEqual("Not Found")
     })
     }); 
     test('should return 404 error if username does not exist', () => {
@@ -329,8 +329,8 @@ describe('POST /api/articles/:article_id/comments', () => {
         .post('/api/articles/3/comments').send({username: 'not_a_real_user', body: 'here is a body of text how about that'})
         .expect(404)
         .then((response) => {
-        const responseArray = response.res.statusMessage
-        expect(responseArray).toEqual("Not Found")
+        const responseMsg = response.res.statusMessage
+        expect(responseMsg).toEqual("Not Found")
     })
     }); 
     
@@ -379,8 +379,8 @@ describe('PATCH /api/articles/:article_id', () => {
         .patch('/api/articles/999999').send({ inc_votes: 30 })
         .expect(404)
         .then((response) => {
-        const responseArray = response.res.statusMessage
-        expect(responseArray).toEqual("Not Found");
+        const responseMsg = response.res.statusMessage
+        expect(responseMsg).toEqual("Not Found");
         });
     });
     test('should return 400 if votes is an unacceptable data type', () => {
@@ -388,8 +388,8 @@ describe('PATCH /api/articles/:article_id', () => {
         .patch('/api/articles/1').send({ inc_votes: 'TEXT' })
         .expect(400)
         .then((response) => {
-        const responseArray = response.res.statusMessage
-        expect(responseArray).toEqual("Bad Request");
+        const responseMsg = response.res.statusMessage
+        expect(responseMsg).toEqual("Bad Request");
         });
     });
     test('should return 400 error if invalid input data type for the article', () => {
@@ -397,8 +397,8 @@ describe('PATCH /api/articles/:article_id', () => {
         .patch('/api/articles/TEXT').send({ inc_votes: 30 })
         .expect(400)
         .then((response) => {
-            const responseArray = response.res.statusMessage
-            expect(responseArray).toEqual("Bad Request");
+            const responseMsg = response.res.statusMessage
+            expect(responseMsg).toEqual("Bad Request");
         })
     });
 
@@ -411,8 +411,8 @@ describe('DELETE /api/comments/:comment_id', () => {
         .delete('/api/comments/1')
         .expect(204)
         .then((response) => {
-            const responseArray = response.res.statusMessage
-            expect(responseArray).toEqual('No Content')
+            const responseMsg = response.res.statusMessage
+            expect(responseMsg).toEqual('No Content')
         })
     });
     test('should return 400 error if invalid input data type for the comment id', () => {
@@ -420,8 +420,8 @@ describe('DELETE /api/comments/:comment_id', () => {
         .delete('/api/comments/TEXT')
         .expect(400)
         .then((response) => {
-            const responseArray = response.res.statusMessage
-            expect(responseArray).toEqual("Bad Request");
+            const responseMsg = response.res.statusMessage
+            expect(responseMsg).toEqual("Bad Request");
         })
     });
     test('should return 404 error if comment id does not exist', () => {
@@ -429,9 +429,40 @@ describe('DELETE /api/comments/:comment_id', () => {
         .delete('/api/comments/999999')
         .expect(404)
         .then((response) => {
-            const responseArray = response.res.statusMessage
-            expect(responseArray).toEqual("Not Found");
+            const responseMsg = response.res.statusMessage
+            expect(responseMsg).toEqual("Not Found");
         })
     });
     
 });
+
+describe('GET /api/users', () => {
+    test('should return with the correct properties', () => {
+        return request(app)
+        .get('/api/users')
+        .expect(200)
+        .then((response) => {
+            const usersArray = response.body.users
+            const currentUsersLength = data.userData.length
+            expect(usersArray).toHaveLength(currentUsersLength)
+            usersArray.forEach((user) => {
+                expect(Object.keys(user)).toHaveLength(3)
+                expect(user).toHaveProperty('username')
+                expect(user).toHaveProperty('name')
+                expect(user).toHaveProperty('avatar_url')
+            
+        })
+    })
+})
+    test('should return correct error when invalid data type inputted', () => {
+        return request(app)
+        .get('/api/u53r5')
+        .expect(404)
+        .then((response) => {
+            const responseMsg = response.res.statusMessage
+            expect(responseMsg).toEqual("Not Found");
+          });
+    });
+});
+
+

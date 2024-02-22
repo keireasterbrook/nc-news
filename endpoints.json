@@ -72,7 +72,7 @@
     }
 
   },
-  "PATCH /api/articles/:article_id/comments": {
+  "PATCH /api/articles/:article_id": {
     "description": "updates the vote count on a given article",
     "queries": [],
     "exampleResponse": {
@@ -87,6 +87,27 @@
         "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
       }]
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "removes a comment associated with the given comment_id",
+    "queries": [], 
+    "exampleResponse": [
+     " 'No Content' "
+    ]
+  },
+  "GET /api/users": {
+    "description": "serves all of the available users",
+    "queries": [],
+    "exampleResponse": {
+      "users": {
+        
+          "username": "'butter_bridge'",
+          "name": "'jonny'",
+          "avatar_url":
+           " 'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'"
+        
+      }
+    }
   }
-
+  
 }

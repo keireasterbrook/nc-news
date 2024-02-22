@@ -1,4 +1,3 @@
-const { log } = require('console')
 const db = require('./db/connection')
 const fs = require('fs').promises
 
@@ -94,9 +93,14 @@ function removeComment(comment_id){
     RETURNING *;
     `, [comment_id])
     .then((comment) => {
-        console.log(comment.rows[0]);
         return comment.rows[0]
     })
 }
-module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle, removeComment }
+
+function selectUsers(){
+    return db.query(`
+    SELECT * FROM users;`
+    ).then((users) => {return users.rows;})
+}
+module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle, removeComment, selectUsers }
 
