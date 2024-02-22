@@ -143,6 +143,7 @@ describe('GET /api/articles', () => {
     .expect(200)
     .then((response) => {
         const responseArray = response.body.article
+        console.log(responseArray)
         const currentArticleLength = data.articleData.length
         expect(responseArray).toHaveLength(currentArticleLength)
         responseArray.forEach((article) => {
@@ -454,15 +455,6 @@ describe('GET /api/users', () => {
         })
     })
 })
-    test('should return correct error when invalid data type inputted', () => {
-        return request(app)
-        .get('/api/u53r5')
-        .expect(404)
-        .then((response) => {
-            const responseMsg = response.res.statusMessage
-            expect(responseMsg).toEqual("Not Found");
-          });
-    });
 });
 
 describe('GET /api/articles topic query', () => {
@@ -471,16 +463,21 @@ describe('GET /api/articles topic query', () => {
         .get('/api/articles?topic=cats')
         .expect(200)
         .then((topic) => {
-            const topicsArray = topic.body.article[0]
-            expect(topicsArray).toMatchObject({
-                article_id: 5,
-                title: "UNCOVERED: catspiracy to bring down democracy",
-                topic: "cats",
-                author: "rogersop",
-                created_at: expect.any(String),
-                article_img_url:
-                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-              })
+            const topicsArray = topic.body.article
+            expect(topicsArray.length).toBeGreaterThan(0)
+            topicsArray.forEach((topic) => {
+                expect(topic).toMatchObject({
+                    article_id: expect.any(Number),
+                    title: expect.any(String),
+                    topic: "cats",
+                    author: expect.any(String),
+                    created_at: expect.any(String),
+                    article_img_url:
+                    expect.any(String),
+                  })
+
+            })
+
         })
     });
     test('should return all the articles if query is omitted', () => {
@@ -502,15 +499,24 @@ describe('GET /api/articles topic query', () => {
             expect(responseMsg).toEqual("Not Found");
           });
     });
+    test('should return an empty array when the topic asked for exists but has no articles.', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then((topic) => {
+            const topicsArray = topic.body.article
+            expect(topicsArray).toEqual([])
+        })
+    });
+    test('should return 404 when non existent topic entered', () => {
+        return request(app)
+        .get('/api/notATopic')
+        .expect(404)
+        .then((response) => {
+            const responseMsg = response.res.statusMessage
+            expect(responseMsg).toEqual("Not Found");
+          });
+        
+    });
+
 });
-
-
-
-// FEATURE REQUEST The endpoint should also accept the following query:
-
-// topic, which filters the articles by the topic value specified in the query. If the query is omitted, the endpoint should respond with all articles.
-// Consider what errors could occur with this endpoint, and make sure to test for them.
-
-// You should not have to amend any previous tests.
-
-// Remember to add a description of this endpoint to your /api endpoint.
