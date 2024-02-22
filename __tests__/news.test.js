@@ -465,4 +465,52 @@ describe('GET /api/users', () => {
     });
 });
 
+describe('GET /api/articles topic query', () => {
+    test('should return specified topic from articles', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then((topic) => {
+            const topicsArray = topic.body.article[0]
+            expect(topicsArray).toMatchObject({
+                article_id: 5,
+                title: "UNCOVERED: catspiracy to bring down democracy",
+                topic: "cats",
+                author: "rogersop",
+                created_at: expect.any(String),
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+              })
+        })
+    });
+    test('should return all the articles if query is omitted', () => {
+        return request(app)
+        .get(`/api/articles`)
+        .expect(200)
+        .then((response) => {
+            const responseArray = response.body.article
+            const currentArticleLength = data.articleData.length
+            expect(responseArray).toHaveLength(currentArticleLength)
+    });
+    })
+    test('should return correct error when invalid data type inputted', () => {
+        return request(app)
+        .get('/api/4rTic135?t0p1c=d00g5')
+        .expect(404)
+        .then((response) => {
+            const responseMsg = response.res.statusMessage
+            expect(responseMsg).toEqual("Not Found");
+          });
+    });
+});
 
+
+
+// FEATURE REQUEST The endpoint should also accept the following query:
+
+// topic, which filters the articles by the topic value specified in the query. If the query is omitted, the endpoint should respond with all articles.
+// Consider what errors could occur with this endpoint, and make sure to test for them.
+
+// You should not have to amend any previous tests.
+
+// Remember to add a description of this endpoint to your /api endpoint.
