@@ -116,4 +116,3 @@ function selectUsers(){
     ).then((users) => {return users.rows;})
 }
 module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle, removeComment, selectUsers }
-
