@@ -100,7 +100,7 @@
     "queries": [],
     "exampleResponse": {
       "users": {
-        
+          
           "username": "'butter_bridge'",
           "name": "'jonny'",
           "avatar_url":
