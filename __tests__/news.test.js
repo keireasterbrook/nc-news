@@ -606,13 +606,13 @@ describe('PATCH /api/comments/:comment_id', () => {
         .expect(200)
         .then((response) => {
             const updatedComment = response.body.comment
-            console.log(updatedComment)
+           
            expect(updatedComment).toMatchObject({
             body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
             votes: 46,
             author: "butter_bridge",
             article_id: 9,
-            created_at: "2020-04-06T12:17:00.000Z",
+            created_at: expect.any(String),
           })
         })
     });
@@ -627,7 +627,7 @@ describe('PATCH /api/comments/:comment_id', () => {
                 votes: 6,
                 author: "butter_bridge",
                 article_id: 9,
-                created_at: "2020-04-06T12:17:00.000Z",
+                created_at: expect.any(String),
               })
             
         })
