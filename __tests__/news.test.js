@@ -546,3 +546,55 @@ describe('GET /api/articles topic query', () => {
     });
 
 });
+
+describe('GET /api/users/:username', () => {
+    test('should return an object with the correct properties', () => {
+        return request(app)
+        .get('/api/users/butter_bridge')
+        .expect(200)
+        .then((response) => {
+            const responseObj = response.body.user
+            expect(responseObj).toMatchObject({
+                username: "butter_bridge",
+                avatar_url: "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+                name: "jonny"
+            })
+        })
+    });
+    test('should return an object with the correct datatypes', () => {
+        return request(app)
+        .get('/api/users/butter_bridge')
+        .expect(200)
+        .then((response) => {
+            const responseObj = response.body.user
+            expect(responseObj).toMatchObject({
+                username: expect.any(String),
+                avatar_url: expect.any(String),
+                name: expect.any(String)
+            })
+        })
+    });
+    test('should return a different object with the correct properties', () => {
+        return request(app)
+        .get('/api/users/icellusedkars')
+        .expect(200)
+        .then((response) => {
+            const responseObj = response.body.user
+            expect(responseObj).toMatchObject({
+                username: "icellusedkars",
+                avatar_url: expect.any(String),
+                name: expect.any(String)
+            })
+        })
+    });
+    test('should return correct error when given invalid username', () => {
+        return request(app)
+        .get('/api/users/NoUserH3r3')
+        .expect(404)
+        .then((response) => {
+        const responseMsg = response.res.statusMessage
+        expect(responseMsg).toEqual("Not Found")
+    });
+});
+
+})
