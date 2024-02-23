@@ -1,4 +1,4 @@
-const { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle, removeComment, selectUsers, selectUserByUsername, updateComment } = require('./model')
+const { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle, removeComment, selectUsers, selectUserByUsername, updateComment, insertArticle } = require('./model')
 
 const getTopics = (request, response, next) => {
     return selectTopics()
@@ -150,7 +150,20 @@ const patchComment = (request, response, next) => {
         }).catch((error) => {
            next(error);
        })
-       
+}
+
+const postArticle = (request, response, next) => {
+    const { author, title, body, topic } = request.body
+
+ 
+    return insertArticle(author, title, body, topic)
+    .then((article) => {
+        response.status(201).send({article})
+    }).catch((error) => {
+        next(error)})
 
 }
-module.exports = { getTopics, getApi, getArticleById, getArticles, getCommentsFromArticle, postComments, patchArticle, deleteComment, getUsers, getUserByUsername, patchComment }
+
+
+
+module.exports = { getTopics, getApi, getArticleById, getArticles, getCommentsFromArticle, postComments, patchArticle, deleteComment, getUsers, getUserByUsername, patchComment, postArticle }

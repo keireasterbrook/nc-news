@@ -661,3 +661,45 @@ describe('PATCH /api/comments/:comment_id', () => {
     });
 });
 
+describe('POST /api/articles', () => {
+    test('should return the newly added article', () => {
+        return request(app)
+        .post('/api/articles').send({
+            author:'butter_bridge', 
+            title: "I am a title", 
+            body: "I am a body of text", 
+            topic: "mitch"})
+        .expect(201)
+        .then((response) => {
+            const responseArticle = response.body.article
+            expect(responseArticle).toMatchObject({
+                author:'butter_bridge', 
+                title: "I am a title", 
+                body: "I am a body of text", 
+                topic: "mitch",
+                article_id: expect.any(Number),
+                votes: expect.any(Number),
+                created_at: expect.any(String),
+                comment_count: expect.any(Number)
+            }
+            )
+        })
+    });
+    test('should throw 404 error if author does not exist', () => {
+        return request(app)
+        .post('/api/articles').send({
+            author: 'not_a_real_user',
+            title: "I am a title", 
+            body: "I am a body of text", 
+            topic: "mitch"
+         })
+        .expect(404)
+        .then((response) => {
+        const responseMsg = response.res.statusMessage
+        expect(responseMsg).toEqual("Not Found")
+    })
+    });
+
+   
+});
+

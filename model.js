@@ -135,4 +135,24 @@ function updateComment(comment_id, updatedVotes){
     })
 }
 
-module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle, removeComment, selectUsers, selectUserByUsername, updateComment }
+function insertArticle(author, title, body, topic){
+
+    let sqlString = `
+    INSERT INTO articles (author, title, body, topic)
+    VALUES ($1, $2, $3, $4)
+    RETURNING author, 
+    title, 
+    body, 
+    topic, 
+    article_id, 
+    votes, 
+    created_at,
+    (SELECT CAST(COUNT(*) AS INT)FROM comments WHERE comments.article_id = articles.article_id) AS comment_count;`
+
+    return db.query(sqlString, [author, title, body, topic])
+    .then((article) => {
+        return article.rows[0]
+    })
+}
+
+module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle, removeComment, selectUsers, selectUserByUsername, updateComment, insertArticle }
