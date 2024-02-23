@@ -18,7 +18,7 @@ scripts for seeding is - npm run seed
 
 scripts for testing is - npm run test
 
-Minimum version of Node needed to run the project - "6.0.0"
+Minimum version of Node needed to run the project - v21
 
 Minimum version of Postgres needed - v16
 

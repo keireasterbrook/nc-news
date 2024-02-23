@@ -143,7 +143,6 @@ describe('GET /api/articles', () => {
     .expect(200)
     .then((response) => {
         const responseArray = response.body.article
-        console.log(responseArray)
         const currentArticleLength = data.articleData.length
         expect(responseArray).toHaveLength(currentArticleLength)
         responseArray.forEach((article) => {
@@ -191,11 +190,38 @@ test('should return 404 not found error for non-existent input request',() => {
 })
 test('should return in date descending order',() => {
     return request(app)
-    .get('/api/articles?sort_by=created_at')
+    .get('/api/articles?sort_by=created_at&order=DESC')
     .expect(200)
     .then((response) => {
         const responseMsg = response.body.article
         expect(responseMsg).toBeSortedBy('created_at', {descending: true})
+      });
+})
+test('should return in date ascending order',() => {
+    return request(app)
+    .get('/api/articles?sort_by=created_at&order=ASC')
+    .expect(200)
+    .then((response) => {
+        const responseMsg = response.body.article
+        expect(responseMsg).toBeSortedBy('created_at', {ascending: true})
+      });
+})
+test('should return in author in descending order',() => {
+    return request(app)
+    .get('/api/articles?sort_by=author&order=DESC')
+    .expect(200)
+    .then((response) => {
+        const responseMsg = response.body.article
+        expect(responseMsg).toBeSortedBy('author', {descending: true})
+      });
+})
+test('should return in author in ascending order, both different from default',() => {
+    return request(app)
+    .get('/api/articles?sort_by=author&order=ASC')
+    .expect(200)
+    .then((response) => {
+        const responseMsg = response.body.article
+        expect(responseMsg).toBeSortedBy('author', {ascending: true})
       });
 })
 
