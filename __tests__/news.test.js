@@ -598,3 +598,66 @@ describe('GET /api/users/:username', () => {
 });
 
 })
+
+describe('PATCH /api/comments/:comment_id', () => {
+    test('should return comment with updated votes added', () => {
+        return request(app)
+        .patch('/api/comments/1').send({ inc_votes: 30 })
+        .expect(200)
+        .then((response) => {
+            const updatedComment = response.body.comment
+            console.log(updatedComment)
+           expect(updatedComment).toMatchObject({
+            body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+            votes: 46,
+            author: "butter_bridge",
+            article_id: 9,
+            created_at: "2020-04-06T12:17:00.000Z",
+          })
+        })
+    });
+    test('should return comment with updated votes subtracted', () => {
+        return request(app)
+        .patch('/api/comments/1').send({ inc_votes: -10 })
+        .expect(200)
+        .then((response) => {
+            const updatedComment = response.body.comment
+            expect(updatedComment).toMatchObject({
+                body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+                votes: 6,
+                author: "butter_bridge",
+                article_id: 9,
+                created_at: "2020-04-06T12:17:00.000Z",
+              })
+            
+        })
+    })
+    test('should return 404 if comment attempting to post to does not exist', () => {
+        return request(app)
+        .patch('/api/comments/999999').send({ inc_votes: 30 })
+        .expect(404)
+        .then((response) => {
+        const responseMsg = response.res.statusMessage
+        expect(responseMsg).toEqual("Not Found");
+        });
+    });
+    test('should return 400 if votes is an unacceptable data type', () => {
+        return request(app)
+        .patch('/api/comments/1').send({ inc_votes: 'TEXT' })
+        .expect(400)
+        .then((response) => {
+        const responseMsg = response.res.statusMessage
+        expect(responseMsg).toEqual("Bad Request");
+        });
+    });
+    test('should return 400 error if invalid input data type for the comment', () => {
+        return request(app)
+        .patch('/api/comments/TEXT').send({ inc_votes: 30 })
+        .expect(400)
+        .then((response) => {
+            const responseMsg = response.res.statusMessage
+            expect(responseMsg).toEqual("Bad Request");
+        })
+    });
+});
+

@@ -123,5 +123,16 @@ function selectUserByUsername(username){
         return user.rows[0]})
 }
 
+function updateComment(comment_id, updatedVotes){
+    return db.query(
+        `UPDATE comments
+        SET votes = votes + $2
+        WHERE comment_id = $1
+        RETURNING *;
+        `, [comment_id, updatedVotes]
+    ).then((result) => {
+        return result.rows[0];
+    })
+}
 
-module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle, removeComment, selectUsers, selectUserByUsername }
+module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle, removeComment, selectUsers, selectUserByUsername, updateComment }
