@@ -115,4 +115,13 @@ function selectUsers(){
     SELECT * FROM users;`
     ).then((users) => {return users.rows;})
 }
-module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle, removeComment, selectUsers }
+
+function selectUserByUsername(username){
+    return db.query(`
+    SELECT * FROM users WHERE username = $1;`, [username])
+    .then((user) => { 
+        return user.rows[0]})
+}
+
+
+module.exports = { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle, removeComment, selectUsers, selectUserByUsername }

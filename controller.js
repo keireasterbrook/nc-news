@@ -1,4 +1,4 @@
-const { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle, removeComment, selectUsers } = require('./model')
+const { selectTopics, selectApi, selectArticleById, selectArticles, selectCommentsFromArticle, insertComments, updateArticle, removeComment, selectUsers, selectUserByUsername } = require('./model')
 
 const getTopics = (request, response, next) => {
     return selectTopics()
@@ -123,4 +123,18 @@ const getUsers = (request, response, next) =>{
     }).catch((error) => { next(error)})
 }
 
-module.exports = { getTopics, getApi, getArticleById, getArticles, getCommentsFromArticle, postComments, patchArticle, deleteComment, getUsers }
+const getUserByUsername = (request, response, next) => {
+    const { username } = request.params;
+    return selectUserByUsername(username)
+    .then((user) => {
+        if(!user){
+            response.status(404).send("Not Found")
+        }
+        response.status(200).send({user})
+    }).catch((error) => {
+         next(error)})
+
+
+}
+
+module.exports = { getTopics, getApi, getArticleById, getArticles, getCommentsFromArticle, postComments, patchArticle, deleteComment, getUsers, getUserByUsername }
