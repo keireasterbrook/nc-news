@@ -1,6 +1,6 @@
 # Northcoders News API
 
-View the hosted website here - https://nc-news-dknn.onrender.com/ 
+View the hosted website here - https://nc-news-dknn.onrender.com/api
 
 This project is an API for the purpose of accessing application data programmatically, the idea is to mimic the building of a real world back end service, such as Reddit. 
 
